@@ -1,5 +1,6 @@
 ---
 description: Load when editing Telegram Mini App integration, responsive UI, RTL, theme or viewport behavior.
+globs: src/ui/**/*.{ts,tsx},src/app/**/*.tsx,src/telegram/**/*.ts,index.html
 alwaysApply: false
 ---
 

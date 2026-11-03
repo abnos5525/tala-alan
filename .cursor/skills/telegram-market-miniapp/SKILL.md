@@ -14,3 +14,4 @@ description: Use for planning or implementing this Telegram Mini App, its market
 7. Do not load every reference or folder. Search for and read only files needed for the current task.
 8. Use subagents only for genuinely independent, high-risk research or final verification. Avoid spawning agents for routine edits because separate contexts add cost.
 9. Do not repeat full project requirements in chat; these project documents are the source of truth.
+10. For Telegram, Decimal, Zod, Vite, React, or Tailwind behavior, read `.cursor/skills/source-repos/SKILL.md` and open only the matching repository. For Persian replies, read `.cursor/skills/persian-rtl/SKILL.md`.

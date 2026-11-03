@@ -1,5 +1,6 @@
 ---
 description: Load when editing financial formulas, price normalization, signal thresholds or market-data validation.
+globs: src/market/**/*.ts,src/calc/**/*.ts,docs/FORMULAS.md
 alwaysApply: false
 ---
 
