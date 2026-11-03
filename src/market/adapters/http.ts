@@ -1,3 +1,10 @@
+export function quoteRequest(): RequestInit {
+  return {
+    cache: 'no-store',
+    signal: AbortSignal.timeout(15_000),
+  }
+}
+
 export class MarketHttpError extends Error {
   readonly status: number
 

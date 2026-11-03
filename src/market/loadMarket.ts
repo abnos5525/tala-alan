@@ -47,5 +47,6 @@ function failureDetail(error: unknown): string {
   if (error instanceof ZodError) return 'invalid_payload'
   if (error instanceof Error && error.message === 'invalid_quote') return 'invalid_quote'
   if (error instanceof Error && error.message === 'invalid_json') return 'invalid_json'
+  if (error instanceof Error && (error.name === 'TimeoutError' || error.name === 'AbortError')) return 'timeout'
   return 'network'
 }

@@ -1,11 +1,11 @@
-import { readBody } from './http.ts'
+import { quoteRequest, readBody } from './http.ts'
 import type { Quote } from '../types.ts'
 import { goldApiSchema, priceString, utcTimestamp } from '../validate.ts'
 
 const url = 'https://api.gold-api.com/price/XAU/USD'
 
 export async function fetchGoldApiQuote(fetchImpl: typeof fetch, now: Date): Promise<Quote> {
-  const response = await fetchImpl(url)
+  const response = await fetchImpl(url, quoteRequest())
   const body = goldApiSchema.parse(await readBody(response))
   const price = priceString(body.price)
   const timestamp = utcTimestamp(body.updatedAt)

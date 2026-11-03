@@ -4,6 +4,19 @@ import type { Instrument } from './types.ts'
 
 const now = new Date('2026-11-03T21:00:00.000Z')
 
+test('quote requests are uncached and time out on their own signal', async () => {
+  const seen: RequestInit[] = []
+  await loadMarket({
+    fetch: (input, init) => {
+      if (init) seen.push(init)
+      return fakeFetch(okBodies())(input)
+    },
+    now,
+  })
+  expect(seen.length).toBeGreaterThan(0)
+  expect(seen.every((init) => init.cache === 'no-store' && init.signal instanceof AbortSignal && !init.signal.aborted)).toBe(true)
+})
+
 test('normalizes ounce, dollar, and 18k quotes', async () => {
   const readings = await loadMarket({ fetch: fakeFetch(okBodies()), now })
   const ready = readings.filter((reading) => reading.state === 'READY')

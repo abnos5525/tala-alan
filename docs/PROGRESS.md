@@ -1,11 +1,16 @@
 # Project progress
 
-Current step: 4 — complete. Formula units are still unapproved. Conflict and age limits below are provisional.
+Current step: 9 — complete. Operator guide is in `docs/OPERATOR.md`. The app is not deployed. Age and spread limits are now the confirmed operating standard. No hosting account is stored in the repo.
 
 Completed steps:
 - STEP 0: repository and toolchain inspected; Cursor setup verified. No product code added.
 - STEP 3: React, Vite, TypeScript, and Tailwind scaffolded with pnpm. No market adapters and no formulas.
 - STEP 4: market adapters, Zod validation, freshness, and source-conflict handling. No formulas and no dashboard.
+- STEP 5: Decimal formulas and signal gates, with unit tests. Dashboard not wired.
+- STEP 6: Persian RTL dashboard with loading, empty, error, offline, stale, and conflict states. Telegram script not added.
+- STEP 7: official `telegram-web-app.js` plus `ready` and `expand`. No bot server and no `initData` authentication.
+- STEP 8: build, typecheck, lint, tests, and one release review. Three small reliability fixes applied.
+- STEP 9: deployment and operator guide. No host was chosen and no bot server was added.
 
 STEP 1 findings (no product code, formulas unchanged):
 
@@ -98,5 +103,60 @@ Cursor guidance placed on 2026-11-04, outside the product steps:
 - Rule `src-stack.mdc` for `src/**/*.{ts,tsx}`. Financial and Telegram rules now have file globs.
 - `.gitignore` ignores `.cursor/` and `docs/`, so these files are on disk but not covered by git until that ignore changes.
 
+STEP 5 result:
+- `usdExpression` is `(gold × 24) / 18 / ounce`. Buy comparison is `gold × 24 >= market × ounce × 18`, so equality buys. `31.1035` is not in this path.
+- `gold18kExpression` is `(ounce × usd × 0.75) / 31.1035`. Buy comparison is `market × 31.1035 < ounce × usd × 0.75`, so equality sells.
+- A gram gold quote returns `DATA_UNAVAILABLE` / `unit_mismatch` for the USD signal. The 18K signal requires USD per troy ounce, one local currency per USD, and the same currency per gram.
+- Stale, conflict, missing, non-positive, and two ready quotes for one input suppress the signal. No price is blended.
+- Formula audit found no dimensional or equality bug.
+
+Latest verified checks added:
+- `pnpm test` → 3 files, 13 tests passed
+- `pnpm exec tsc -b` → exit 0
+- `pnpm lint` → exit 0
+
+STEP 6 result:
+- `index.html` is `lang=fa` and `dir=rtl`. Cards show state text, formula, threshold, display-only percent, unit, source, timestamp, and attribution links.
+- Browser check on 2026-11-04: loading text appeared, then both cards showed «اختلاف منبع» because gold-api and Corgano were both ready. Prices, toman units, Corgano and NerkhAra links, and Tehran timestamps were visible. Retry returned to loading and then to the cards. At 390px width, scroll width equalled client width.
+- `pnpm test` → 4 files, 15 tests passed. `pnpm lint` and `pnpm exec tsc -b` exited 0.
+
+STEP 7 result:
+- `index.html` loads `https://telegram.org/js/telegram-web-app.js` before the app module. `@tma.js/sdk` is not installed.
+- `src/telegram/webapp.ts` calls `ready()` and `expand()`, and sets header and background from `themeParams` when those methods exist. It does not read `initData`.
+- CSS uses Telegram theme and safe-area variables, with the previous colors as fallback outside Telegram.
+- Browser check outside Telegram: the script request completed, `window.Telegram.WebApp` was absent, the page stayed `rtl`, and both cards returned after loading.
+- BotFather, after the site is on HTTPS: @BotFather → Bot Settings → Menu Button (`/setmenubutton`) with the site URL, and Main Mini App for the profile launch button. No `/start` handler and no `setChatMenuButton` server.
+
+Latest verified checks added:
+- `pnpm test` → 5 files, 17 tests passed
+- `pnpm exec tsc -b` → exit 0
+- `pnpm lint` → exit 0
+
+STEP 8 result:
+- `pnpm test` → 5 files, 18 tests passed. `pnpm lint` → exit 0. `pnpm build` (`tsc -b` and Vite) → exit 0.
+- Release review found no secrets, no `initData` identity use, and no second Telegram SDK. Bad, stale, and conflicting quotes still suppress signals.
+- Fixes applied after that review: each quote request uses `cache: 'no-store'` and its own 15 second `AbortSignal.timeout`; a timeout becomes `DATA_UNAVAILABLE`; the loading state has «تلاش دوباره»; viewport meta includes `viewport-fit=cover`.
+- Browser recheck: loading showed the retry button, viewport content included `viewport-fit=cover`, and the cards returned.
+- Still open, not changed: a quote can remain on screen past its max age until retry; age and spread limits in `src/market/policy.ts` are provisional.
+
+Shop units, owner decision 2026-11-04:
+- Gold is 18K toman per gram. Cash USD is toman per 1 USD. The USD formula now multiplies by the same `31.1035` grams per troy ounce used in the 18K formula.
+- Two ounce quotes inside the 0.5% spread use `gold-api.com` and are not averaged. A wider spread still suppresses the signal.
+- `pnpm test` → 5 files, 19 tests passed. `pnpm lint` → exit 0.
+- Formula audit `980dfee7-2e82-40c9-ae9c-9c191543d499`: dimensions match and equality is unchanged. No formula bug.
+- Browser: dollar card showed «نه خرید» and gold card showed «خرید». Displayed thresholds use two decimal places. The comparison still uses the full Decimal.
+
+STEP 9 result:
+- `docs/OPERATOR.md` tells the operator to run `pnpm install`, `pnpm test`, and `pnpm build`, then publish the `dist/` directory on an HTTPS static host.
+- BotFather steps match the official Mini App docs: `/setmenubutton` or Bot Settings → Menu Button, plus Main Mini App. No `setChatMenuButton` server and no custom `/start`.
+- `http://127.0.0.1:5173` is documented as a local browser address, not a BotFather URL.
+- `pnpm build` after the shop-unit change exited 0. Output: `dist/index.html` 0.57 kB, CSS 10.83 kB, JS 352.83 kB.
+
+Operating standard, owner request 2026-11-04:
+- Ounce quotes stale after 5 minutes. Local USD and 18K quotes stale after 15 minutes. Relative ounce spread above `0.005` stays a conflict.
+- The screen states that a NerkhAra credit does not grant rights in TGJU or Bonbast data.
+- Hosting stays a static HTTPS copy of `dist/`. No provider account was added.
+- The page uses a dark Dracula palette, Vazirmatn, and Telegram safe-area padding. Header and background colors passed to Telegram are `#282a36`.
+
 Next action:
-- STEP 5 is the Decimal formula engine. Do not start it until the owner confirms the USD formula mass unit and toman versus rial. The provisional spread and age gates can be corrected in the same answer.
+- The workflow steps are complete. Publish `dist/` when the owner names an HTTPS host.

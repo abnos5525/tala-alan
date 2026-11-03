@@ -1,4 +1,4 @@
-import { readBody } from './http.ts'
+import { quoteRequest, readBody } from './http.ts'
 import type { Quote } from '../types.ts'
 import { nerkharaSchema, priceString, utcTimestamp } from '../validate.ts'
 
@@ -33,7 +33,7 @@ export async function fetchNerkharaQuote(
   now: Date,
 ): Promise<Quote> {
   const endpoint = endpoints[which]
-  const response = await fetchImpl(endpoint.url)
+  const response = await fetchImpl(endpoint.url, quoteRequest())
   const body = nerkharaSchema.parse(await readBody(response))
   if (body.item.id !== endpoint.id || body.item.unit !== 'IRT') throw new Error('invalid_quote')
   const price = priceString(body.item.price)
