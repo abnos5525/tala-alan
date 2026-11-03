@@ -1,0 +1,12 @@
+---
+description: Minimal always-on rules for this Telegram Mini App project
+alwaysApply: true
+---
+
+- Follow `docs/PROJECT_SPEC.md` and `docs/WORKFLOW.md`; do not invent requirements.
+- Use pnpm, React, TypeScript, Vite and Tailwind; preserve existing setup where practical.
+- No backend, database, scraping, fake production data, exposed secrets or unnecessary dependencies.
+- Keep financial calculations isolated, unit-safe, Decimal-based and tested.
+- Never emit a signal from missing, stale, invalid or conflicting data.
+- Execute one approved workflow step only; stop and report briefly.
+- Do not change formulas, units, API providers or scope without user approval.

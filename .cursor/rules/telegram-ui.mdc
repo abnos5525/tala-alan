@@ -1,0 +1,11 @@
+---
+description: Load when editing Telegram Mini App integration, responsive UI, RTL, theme or viewport behavior.
+alwaysApply: false
+---
+
+- Build mobile-first, Persian RTL UI compatible with Telegram WebView.
+- Respect Telegram theme, viewport and safe-area insets when supported by the SDK.
+- Include loading, empty, offline, stale-data and error states.
+- Display price unit, source and data timestamp next to every market value.
+- Color must not be the only signal indicator; include clear text and icon/label.
+- Do not claim Telegram identity is verified without server-side initData validation.

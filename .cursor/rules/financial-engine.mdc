@@ -1,0 +1,11 @@
+---
+description: Load when editing financial formulas, price normalization, signal thresholds or market-data validation.
+alwaysApply: false
+---
+
+- Read `docs/FORMULAS.md` before changing financial logic.
+- Use Decimal arithmetic; never rely on JavaScript floating-point for money calculations.
+- Normalize and validate currency, unit, source and timestamp before calculation.
+- Preserve supplied formulas until dimensional consistency and units are approved.
+- Add boundary, equality, invalid-input, stale-data and source-conflict tests.
+- If inputs or units are ambiguous, stop and ask; do not guess.
